@@ -196,4 +196,5 @@ e.g this.state.comment ='hello' is wrong
 instead use setState();
 this.setState( {comment: 'hello'}); 
 the only place to assign this.state is the constructor
+
 */
