@@ -196,5 +196,111 @@ e.g this.state.comment ='hello' is wrong
 instead use setState();
 this.setState( {comment: 'hello'}); 
 the only place to assign this.state is the constructor
+STATE UPDATE MAY BE ASYNCHRONOUS
+react may batch multiple setState() calls into a single upddate for performance
+ because this.props and this.state may be updated asynchronosly, one should not rely on their value for d next state
+  
+ e.g this code may fail to update the counter
+ // Wrong
+this.setState({
+  counter: this.state.counter + this.props.increment,
+});
+to fix it,use the second form of setState() that accepts a function rather than an object. 
+That function will receive the previous state as the first  argment and the props at the time te update is applied as the second argument;
+// Correct
+this.setState((state, props) => ({
+  counter: state.counter + props.increment
+}));
 
+
+STATE UPATES ARE MERGED
+when setState() is called react merges the object provided into te crrent state
+e.g
+constructor(props) {
+    super(props);
+    this.state = {
+      posts: [],
+      comments: []
+    };
+  }
+  then it can e updated independently with seperate setState() calls:
+  componentDidMount() {
+    fetchPosts().then(response => {
+      this.setState({
+        posts: response.posts
+      });
+    });
+
+    fetchComments().then(response => {
+      this.setState({
+        comments: response.comments
+      });
+    });
+  }
+
+   state is always owneed by a specific componenet and any data or ui
+   derived from that state can only affect componenets below them in the tree.
+
+
+   to show that all components are trully isolated we can create an app component that renders three clocks
+   function App() {
+  return (
+    <div>
+      <Clock />
+      <Clock />
+      <Clock />
+    </div>
+  );
+}
+ReactDOM.render(
+  <App />,
+  document.getElementById('root')
+);
+
+HANDLING EVENTS WITH REACT JS
+ react events are named using camelCase rather than lowercase
+ with jsx a function is passed as the event handler rather than a string
+ e.g
+ <button onClick = "activateLasers()">
+ Activate Lasers
+ </button>
+
+ in react is written as 
+ <button onClick = {activateLasers}>
+ Activate Lasers
+ </button>
+
+ when a component is defined using an es6 class, a common pattern is for an event handler to be a method on te class
+ e.g
+ this toggle component renders a button that lets the user toggle etween ON and OFF
+ states
+
+ class Toggle extends React.Component {
+   constructor(props){
+     super(props);
+     this.state = {isToggleOn: true};
+     // this inding is neccessary to make 'this' work in the callback
+
+     this.handleClick = 
+     this.handleClick.bind(this);
+   }
+   handleClick(){
+     this.setState(state => ({
+       isToggleOn: !state.isToggleOn
+     }));
+   }
+   render (){
+     return (
+      < button onClick={this.handleClick}>
+      {this.state.isToggleOn ? 'ON':'OFF'}
+      </button>
+     );
+   }
+ }
+ ReactDOM.render (
+   <Toggle/>
+   docment.getElementyId('root')
+ );
+
+ 
 */
