@@ -58,3 +58,39 @@ e.g const c = require('http')
 nodemon can be used to listen to changes in our output
 
 */
+// CREATING A SERVER
+//create a new file called server.js
+//in order for our node to access server.js
+//we go to our json file n type in our node command
+//node comes with an in built server
+//in order to grab this we just make the request.
+const http = require( 'http')
+
+const server = http.createServer((request, response)=> {
+    //console.log('tanks for d request')
+    response.setHeader('Content-type','application/json');
+    response.setHeader('Access-Control-Allow-Origin','+');
+    response.writeHead(200); //status code
+    const dataObj = {id: 123, name: 'boo', email: 'mo@work.org'};
+    const data = JSON.stringify(dataObj);
+    response.end(data);
+});
+server.listen(3000, function(params) {
+    console.log('eyyyyyy');
+});
+
+
+//expresss.js intro
+//create a directory called myapp, change to it and run npm init
+//install express as a deppendency using d installation guide
+//create a file named app.js and copy the code below
+const express = require('express')
+const app = express()
+const port = 3000
+
+app.get('/', (req, res) => res.send('Hello World!'))
+
+app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+//rn the app with the command
+//node app.js
+//then load http://localhost:3000/ in a browser to see the output
