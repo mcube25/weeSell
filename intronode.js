@@ -94,3 +94,147 @@ app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 //rn the app with the command
 //node app.js
 //then load http://localhost:3000/ in a browser to see the output
+
+//express middleware
+
+//an express middlewre is a routing middleware web framework that has minimal functionAlity of its own. an express installation is a series of middleware function calls
+//middleware functions that have access to the request object(req), the response(res), and te next middleware function in te application request-response cycle.
+//The next middleware function is commonly denoted by a variable named next
+//middleware functions can erform any of the following task
+//Execute code
+//Make changes to the request and response objects
+//End reqest response cycle
+//call the next middleware function in te stack
+//an express application can use the following types of middleware
+//aplication-level middleware
+//router-level middleware
+//error handling middleware
+//built-in middleware
+//third-party middleware
+
+//application-level middleware
+/*
+Bind application-level middleware to an instance of the app object by using the app.use() and app.METHOD() functions, where METHOD is the HTTP method of the request that the middleware function handles (such as GET, PUT, or POST) in lowercase.
+
+This example shows a middleware function with no mount path. The function is executed every time the app receives a request
+*/
+var app = express()
+app.use(function(req,res,next){
+    console.log('time:',Date.now())
+    next()
+})
+//app.use( (req,res,next)=> { console.log(), next()})
+
+
+//This example shows a route and its handler function (middleware system). The function handles GET requests to the /user/:id path.
+app.get('/user/:id', function (req, res, next) {
+    res.send('USER')
+  })
+  //series of middleware functions at a mount point
+  app.use('/user/:id', function (req, res, next) {
+    console.log('Request URL:', req.originalUrl)
+    next()
+  }, function (req, res, next) {
+    console.log('Request Type:', req.method)
+    next()
+  })
+  //route handlers enable u to define multiple routes for a path
+//the second route will never get called
+app.get('/user/:id', function (req, res, next) {
+    console.log('ID:', req.params.id)
+    next()
+  }, function (req, res, next) {
+    res.send('User Info')
+  })
+  
+  // handler for the /user/:id path, which prints the user ID
+  app.get('/user/:id', function (req, res, next) {
+    res.end(req.params.id)
+  })
+  //ROUTER LEVEL MIDDLEWARE
+  const app = express()
+  const router =express.Router()
+  // a middleware fnction with no mount path. tis code is executed wit every request to te router
+  router.use((req,res,next)=>{
+      console.log('Time:', Date.now())
+  })
+
+  //a middleware sub-stack shows request info for any type of http request to te /user/:id path
+  router.use('/user/:id',(req,res,next)=>{
+      console.log('Request URL', req.originalUrl)
+      next()
+  },(req,res,next)=>{
+      console.log('Request Type:',req.method)
+      next()
+  })
+  //a middleware sub statck tat andles GET request to the /user/:id path
+  router.get('/user/:id',(req,res,next)=>{
+      //if id is 0 ski to te next parameter
+      if (req.params.id === 0) next ('route')
+      //otherwise pass control to te next middleware function in tis stack
+      else next()
+  }, (req,res,next)=>{
+      //render a regular page
+      res.render('regular')
+  })
+  
+  //handler for the /user/:id path wich renders a special page
+  router.get('/user/:id',(req,res,next)=>{
+      console.log(req.params.id)
+      res.render('special')
+  })
+
+//mount the router on thhe app
+app.use ('/',router);
+
+//tis example shows a middleware sub-stack tat handles GET request
+//to d /user/:id path
+const app = exppress();
+const router = express.Router()
+//predicate the router with a check and bail out wen needed
+router.use((req,res,next)=>{
+    if (!req.headers['x-auth'])
+    return next('router')
+    next()
+})
+
+router.get('/',(req,res){
+    res.send('hello, user!')
+})
+//use router 404 for anyting falling through
+app.use('/admin', router, (req,res)=>{
+    res.sendStatus(401)
+})
+
+//Error handling middleware
+//it requires four arguments instaead of 3
+//(err,req,res,next)
+app.use((err,req,res,next)=>{
+    console.error(err.stack)
+    res.status(500).send('someting broke')
+})
+
+//built-in middleware
+/*
+express.static serves static assets such as HTML files, images, and so on.
+express.json parses incoming requests with JSON payloads. NOTE: Available with Express 4.16.0+
+express.urlencoded parses incoming requests with URL-encoded payloads. NOTE: Available with Express 4.16.0+
+*/
+
+//Third-party middleware
+
+//use third party middleware to add functionality to express apps
+//install te node.js module for d required functionality, ten load it to ur app
+//at d application level or router level
+//$ npm install cookie-parser
+const express = require('express')
+const app = express()
+const cookieParser = require('cookie-parser')
+//load the cookie-parsing middleware
+app.use(cookieParser())
+
+
+
+
+
+
