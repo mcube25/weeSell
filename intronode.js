@@ -234,6 +234,31 @@ const cookieParser = require('cookie-parser')
 app.use(cookieParser())
 
 
+//complete web developer
+//express middleware
+const express = require('express')
+const app= express();
+app.use((req,res,next)=>{
+    console.log('<h1>helloooo</h1>')
+    next()
+})
+//te above is te basic concept of middleware
+app.get('/',(req,res)=>{
+    err.send('testtest')
+});
+app.listen(3000);
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
